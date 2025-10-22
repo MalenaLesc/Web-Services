@@ -76,6 +76,7 @@ public class EventoSolidario {
         this.fechaHoraEvento = fechaHoraEvento;
         this.participantesEvento = participantesEvento;
     }
+    
 
     public EventoSolidario(){}
 
