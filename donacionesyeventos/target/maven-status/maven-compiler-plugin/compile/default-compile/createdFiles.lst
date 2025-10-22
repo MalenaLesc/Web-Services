@@ -1,0 +1,17 @@
+com\webservices\donacionesyeventos\dtos\InformeDonacionesDTO.class
+com\webservices\donacionesyeventos\Repositorios\DonacionesEventoRepository.class
+com\webservices\donacionesyeventos\grapql\FiltroPersonalizadoController.class
+com\webservices\donacionesyeventos\Entidades\CategoriaDonacion.class
+com\webservices\donacionesyeventos\Repositorios\UsuarioRepository.class
+com\webservices\donacionesyeventos\Entidades\DonacionesEvento.class
+com\webservices\donacionesyeventos\Entidades\FiltroPersonalizado.class
+com\webservices\donacionesyeventos\DonacionesyeventosApplication.class
+com\webservices\donacionesyeventos\grapql\InformeDonacionesController.class
+com\webservices\donacionesyeventos\Servicios\UsuarioServicio.class
+com\webservices\donacionesyeventos\Entidades\InventarioDonaciones.class
+com\webservices\donacionesyeventos\Entidades\EventoSolidario.class
+com\webservices\donacionesyeventos\Entidades\Usuario.class
+com\webservices\donacionesyeventos\Servicios\InformeDonacionesServicio.class
+com\webservices\donacionesyeventos\Repositorios\FiltroPersonalizadoRepository.class
+com\webservices\donacionesyeventos\Servicios\FiltroPersonalizadoServicio.class
+com\webservices\donacionesyeventos\Entidades\RolUsuario.class

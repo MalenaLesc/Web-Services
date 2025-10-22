@@ -1,0 +1,47 @@
+type InformeDonaciones {
+  categoria: String
+  eliminado: Boolean
+  total: Int
+}
+
+type FiltroPersonalizado {
+  id: ID
+  nombreFiltro: String
+  categoria: String
+  fechaInicio: String
+  fechaFin: String
+  eliminado: Boolean
+  usuario: Usuario
+}
+
+type Usuario {
+  id: ID
+  nombreUsuario: String
+  nombre: String
+  apellido: String
+  email: String
+}
+
+type Query {
+  informeDonaciones(
+    categoria: String,
+    fechaInicio: String,
+    fechaFin: String,
+    eliminado: Boolean
+  ): [InformeDonaciones]
+
+  filtrosPorUsuario(usuarioId: ID!): [FiltroPersonalizado]
+}
+
+type Mutation {
+  guardarFiltro(
+    usuarioId: ID!,
+    nombreFiltro: String!,
+    categoria: String,
+    fechaInicio: String,
+    fechaFin: String,
+    eliminado: Boolean
+  ): FiltroPersonalizado
+
+  eliminarFiltro(id: ID!): Boolean
+}

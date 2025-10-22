@@ -1,0 +1,17 @@
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\DonacionesyeventosApplication.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\dtos\InformeDonacionesDTO.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Entidades\CategoriaDonacion.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Entidades\DonacionesEvento.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Entidades\EventoSolidario.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Entidades\FiltroPersonalizado.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Entidades\InventarioDonaciones.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Entidades\RolUsuario.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Entidades\Usuario.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\grapql\FiltroPersonalizadoController.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\grapql\InformeDonacionesController.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Repositorios\DonacionesEventoRepository.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Repositorios\FiltroPersonalizadoRepository.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Repositorios\UsuarioRepository.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Servicios\FiltroPersonalizadoServicio.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Servicios\InformeDonacionesServicio.java
+C:\Users\mllov\Sist-Distribuidos\donacionesyeventos\src\main\java\com\webservices\donacionesyeventos\Servicios\UsuarioServicio.java
