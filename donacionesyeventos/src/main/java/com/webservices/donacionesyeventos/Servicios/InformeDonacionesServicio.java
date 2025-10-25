@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.webservices.donacionesyeventos.Entidades.CategoriaDonacion;
@@ -20,39 +19,79 @@ public class InformeDonacionesServicio {
     @Autowired
     private DonacionesEventoRepository donacionesEventoRepository;
 
-    public List<InformeDonacionesDTO> obtenerInforme(CategoriaDonacion categoria, LocalDateTime fechaInicio,LocalDateTime fechaFin,Boolean eliminado) {
-        Specification<DonacionesEvento> spec = (root, query, cb) -> cb.conjunction();
+    public List<InformeDonacionesDTO> obtenerInforme(
+            CategoriaDonacion categoria,
+            LocalDateTime fechaInicio,
+            LocalDateTime fechaFin,
+            Boolean eliminado) {
 
-        if (categoria != null) {
-            spec = spec.and((root, query, cb) ->
-                cb.equal(root.get("item").get("categoria"), categoria));
-        }
-        if (fechaInicio != null && fechaFin != null) {
-            spec = spec.and((root, query, cb) ->
-                cb.between(root.get("item").get("fechaHoraAlta"), fechaInicio, fechaFin));
-        }
-        if (eliminado != null) {
-            spec = spec.and((root, query, cb) ->
-                cb.equal(root.get("item").get("eliminado"), eliminado));
+        if (fechaInicio != null && fechaFin != null && fechaFin.isBefore(fechaInicio)) {
+            throw new IllegalArgumentException("La fecha de fin no puede ser anterior a la fecha de inicio");
         }
 
-        List<DonacionesEvento> resultados = donacionesEventoRepository.findAll(spec);
 
-        // Agrupamiento por categoría y eliminado
-        return resultados.stream()
-            .collect(Collectors.groupingBy(
-                d -> new AbstractMap.SimpleEntry<>(
+        List<DonacionesEvento> todas = donacionesEventoRepository.findAll();
+
+        return todas.stream()
+                .filter(d -> d.getItem() != null)
+                .filter(d -> categoria == null || d.getItem().getCategoria() == categoria)
+                .filter(d -> eliminado == null || d.getItem().isEliminado() == eliminado)
+                .filter(d -> {
+                    LocalDateTime fecha = d.getItem().getFechaHoraAlta();
+                    if (fecha == null) return true;
+                    boolean dentroInicio = (fechaInicio == null || !fecha.isBefore(fechaInicio));
+                    boolean dentroFin = (fechaFin == null || !fecha.isAfter(fechaFin));
+                    return dentroInicio && dentroFin;
+                })
+                .map(d -> new InformeDonacionesDTO(
                         d.getItem().getCategoria(),
-                        d.getItem().isEliminado()),
-                Collectors.summingInt(DonacionesEvento::getCantidad)
-            ))
-            .entrySet().stream()
-            .map(e -> new InformeDonacionesDTO(
-                    e.getKey().getKey(), // categoría
-                    e.getKey().getValue(), // eliminado
-                    e.getValue() // total
-            ))
-            .toList();
+                        d.getItem().isEliminado(),
+                        d.getCantidad()
+                ))
+                .toList();
     }
-    
+
+
+    public List<InformeDonacionesDTO> obtenerInformeAgrupado(
+            CategoriaDonacion categoria,
+            LocalDateTime fechaInicio,
+            LocalDateTime fechaFin,
+            Boolean eliminado) {
+
+        if (fechaInicio != null && fechaFin != null && fechaFin.isBefore(fechaInicio)) {
+            throw new IllegalArgumentException("La fecha de fin no puede ser anterior a la fecha de inicio");
+        }
+
+        List<DonacionesEvento> todas = donacionesEventoRepository.findAll();
+
+        List<DonacionesEvento> filtradas = todas.stream()
+                .filter(d -> d.getItem() != null)
+                .filter(d -> categoria == null || d.getItem().getCategoria() == categoria)
+                .filter(d -> eliminado == null || d.getItem().isEliminado() == eliminado)
+                .filter(d -> {
+                    LocalDateTime fecha = d.getItem().getFechaHoraAlta();
+                    if (fecha == null) return true;
+                    boolean dentroInicio = (fechaInicio == null || !fecha.isBefore(fechaInicio));
+                    boolean dentroFin = (fechaFin == null || !fecha.isAfter(fechaFin));
+                    return dentroInicio && dentroFin;
+                })
+                .toList();
+
+
+        return filtradas.stream()
+                .collect(Collectors.groupingBy(
+                        d -> new AbstractMap.SimpleEntry<>(
+                                d.getItem().getCategoria(),
+                                d.getItem().isEliminado()),
+                        Collectors.summingInt(DonacionesEvento::getCantidad)
+                ))
+                .entrySet().stream()
+                .map(e -> new InformeDonacionesDTO(
+                        e.getKey().getKey(),
+                        e.getKey().getValue(),
+                        e.getValue()
+                ))
+                .toList();
+    }
+
 }

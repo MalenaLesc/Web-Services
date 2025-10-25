@@ -1,0 +1,17 @@
+.container-informes {
+    max-width: 900px;
+    margin: 2rem auto;
+}
+
+.container-button {
+    margin-bottom: 1rem;
+}
+
+.button-style button{
+    background-color:"#1976d2";
+    color: "white";
+    border: "none";
+    padding: "0.5rem 1rem";
+    border-radius: "4px";
+    cursor: "pointer";
+}

@@ -1,3 +1,10 @@
+enum CategoriaDonacion {
+  ROPA
+  ALIMENTOS
+  JUGUETES
+  UTILES_ESCOLARES
+}
+
 type InformeDonaciones {
   categoria: String
   eliminado: Boolean
@@ -22,30 +29,6 @@ type Usuario {
   email: String
 }
 
-type Query {
-  informeDonaciones(
-    categoria: String,
-    fechaInicio: String,
-    fechaFin: String,
-    eliminado: Boolean
-  ): [InformeDonaciones]
-
-  filtrosPorUsuario(usuarioId: ID!): [FiltroPersonalizado]
-}
-
-type Mutation {
-  guardarFiltro(
-    usuarioId: ID!,
-    nombreFiltro: String!,
-    categoria: String,
-    fechaInicio: String,
-    fechaFin: String,
-    eliminado: Boolean
-  ): FiltroPersonalizado
-
-  eliminarFiltro(id: ID!): Boolean
-}
-
 type DetalleEvento {
   dia: String
   nombreEvento: String
@@ -58,11 +41,42 @@ type InformeParticipacion {
   eventos: [DetalleEvento]
 }
 
-extend type Query {
+type Query {
+
+  informeDonaciones(
+    categoria: CategoriaDonacion,
+    fechaInicio: String,
+    fechaFin: String,
+    eliminado: Boolean
+  ): [InformeDonaciones]
+
+
+  informeDonacionesAgrupado(
+    categoria: CategoriaDonacion,
+    fechaInicio: String,
+    fechaFin: String,
+    eliminado: Boolean
+  ): [InformeDonaciones]
+
   informeParticipacion(
     usuarioId: ID!,
     fechaInicio: String,
     fechaFin: String
   ): [InformeParticipacion]
+
+
+  filtrosPorUsuario(usuarioId: ID!): [FiltroPersonalizado]
 }
 
+type Mutation {
+  guardarFiltro(
+    usuarioId: ID!,
+    nombreFiltro: String!,
+    categoria: CategoriaDonacion,
+    fechaInicio: String,
+    fechaFin: String,
+    eliminado: Boolean
+  ): FiltroPersonalizado
+
+  eliminarFiltro(id: ID!): Boolean
+}
