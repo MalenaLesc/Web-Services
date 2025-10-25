@@ -4,6 +4,7 @@ import { INFORME_DONACIONES } from "../graphql/queries/informeDonaciones";
 import { INFORME_DONACIONES_AGRUPADO } from "../graphql/queries/informeDonacionesAgrupado";
 import { OBTENER_FILTROS_POR_USUARIO } from "../graphql/queries/obtenerFiltros";
 import { GUARDAR_FILTRO } from "../graphql/mutations/guardarFiltro";
+import { ELIMINAR_FILTRO } from "../graphql/mutations/eliminarFiltro";
 
 export default function InformeDonaciones() {
   const [categoria, setCategoria] = useState("");
@@ -22,6 +23,7 @@ export default function InformeDonaciones() {
       : INFORME_DONACIONES
   );
 
+  const [eliminarFiltro] = useMutation(ELIMINAR_FILTRO);
   const [guardarFiltro] = useMutation(GUARDAR_FILTRO);
 
   const handleGuardarFiltro = async () => {
@@ -54,6 +56,7 @@ export default function InformeDonaciones() {
     }
   };
 
+  
   const { data: filtrosData, refetch } = useQuery(OBTENER_FILTROS_POR_USUARIO, {
     variables: { usuarioId },
   });
@@ -78,9 +81,32 @@ export default function InformeDonaciones() {
     });
   };
 
+
+  const handleAplicarFiltro = (filtro) => {
+    setCategoria(filtro.categoria || "");
+    setFechaInicio(filtro.fechaInicio || "");
+    setFechaFin(filtro.fechaFin || "");
+    setEliminado(
+      filtro.eliminado === null ? "" : filtro.eliminado.toString()
+    );
+    setActiveTab("informeAgrupado");
+  };
+
+  const handleEliminarFiltro = async (id) => {
+
+    try {
+      await eliminarFiltro({ variables: { id } });
+      alert("Filtro eliminado correctamente.");
+      refetch();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div style={{ maxWidth: "900px", margin: "2rem auto" }}>
       <h2>Informe de Donaciones</h2>
+
 
       <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
         <button
@@ -138,10 +164,7 @@ export default function InformeDonaciones() {
           marginBottom: "1rem",
         }}
       >
-        <select
-          value={categoria}
-          onChange={(e) => setCategoria(e.target.value)}
-        >
+        <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
           <option value="">Categoría (todas)</option>
           <option value="ALIMENTOS">ALIMENTOS</option>
           <option value="ROPA">ROPA</option>
@@ -161,10 +184,7 @@ export default function InformeDonaciones() {
           onChange={(e) => setFechaFin(e.target.value)}
         />
 
-        <select
-          value={eliminado}
-          onChange={(e) => setEliminado(e.target.value)}
-        >
+        <select value={eliminado} onChange={(e) => setEliminado(e.target.value)}>
           <option value="">Eliminado (ambos)</option>
           <option value="true">Sí</option>
           <option value="false">No</option>
@@ -186,12 +206,7 @@ export default function InformeDonaciones() {
         </button>
       </div>
 
-      {loading && <p>Cargando...</p>}
-      {error && <p style={{ color: "red" }}>Error: {error.message}</p>}
-
-      {data?.informeDonaciones?.length > 0 ||
-      data?.informeDonacionesAgrupado?.length > 0 ||
-      filtrosData?.filtrosPorUsuario ? (
+      {activeTab === "filtrosGuardados" ? (
         <table
           style={{
             width: "100%",
@@ -201,122 +216,81 @@ export default function InformeDonaciones() {
         >
           <thead>
             <tr>
-              {activeTab === "filtrosGuardados" &&
-              filtrosData?.filtrosPorUsuario ? (
-                <>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    Nombre
-                  </th>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    Categoria
-                  </th>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    Fecha inicio
-                  </th>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    Fecha fin
-                  </th>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    Eliminado
-                  </th>
-                </>
-              ) : (
-                <>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    Categoría
-                  </th>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    Eliminado
-                  </th>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    Total
-                  </th>
-                </>
-              )}
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Fecha inicio</th>
+              <th>Fecha fin</th>
+              <th>Eliminado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
-
           <tbody>
-            {activeTab === "filtrosGuardados" && filtrosData?.filtrosPorUsuario
-              ? filtrosData.filtrosPorUsuario.map((filtro, index) => (
-                  <tr key={index}>
-                    <td style={{ padding: "0.5rem" }}>{filtro.nombreFiltro}</td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {filtro.categoria || "—"}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {filtro.fechaInicio || "—"}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {filtro.fechaFin || "—"}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {filtro.eliminado === null
-                        ? "Ambos"
-                        : filtro.eliminado
-                        ? "Sí"
-                        : "No"}
-                    </td>
-                  </tr>
-                ))
-              : 
-                (activeTab === "informeAgrupado"
-                  ? data?.informeDonacionesAgrupado
-                  : data?.informeDonaciones
-                )?.map((item, index) => (
-                  <tr key={index}>
-                    <td style={{ padding: "0.5rem" }}>{item.categoria}</td>
-                    <td style={{ padding: "0.5rem" }}>
-                      {item.eliminado ? "Sí" : "No"}
-                    </td>
-                    <td style={{ padding: "0.5rem" }}>{item.total}</td>
-                  </tr>
-                ))}
+            {filtrosData?.filtrosPorUsuario?.length > 0 ? (
+              filtrosData.filtrosPorUsuario.map((f) => (
+                <tr key={f.id}>
+                  <td>{f.nombreFiltro}</td>
+                  <td>{f.categoria || "—"}</td>
+                  <td>{f.fechaInicio || "—"}</td>
+                  <td>{f.fechaFin || "—"}</td>
+                  <td>
+                    {f.eliminado === null
+                      ? "Ambos"
+                      : f.eliminado
+                      ? "Sí"
+                      : "No"}
+                  </td>
+                  <td>
+                    <button onClick={() => handleAplicarFiltro(f)}>✅ Aplicar</button>
+                    <button
+                      onClick={() => handleEliminarFiltro(f.id)}
+                      style={{ color: "red", marginLeft: "0.5rem" }}
+                    >
+                      🗑️ Borrar
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center", padding: "1rem" }}>
+                  No hay filtros guardados.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
-      ) : (
-        !loading && <p>No se encontraron resultados.</p>
-      )}
+      ) :data?.informeDonaciones?.length > 0 ||
+  data?.informeDonacionesAgrupado?.length > 0 ? (
+  <table
+    style={{
+      width: "100%",
+      borderCollapse: "collapse",
+      textAlign: "left",
+    }}
+  >
+    <thead>
+      <tr>
+        <th>Categoría</th>
+        <th>Eliminado</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {(activeTab === "informeAgrupado"
+        ? data?.informeDonacionesAgrupado
+        : data?.informeDonaciones
+      )?.map((item, index) => (
+        <tr key={index}>
+          <td>{item.categoria}</td>
+          <td>{item.eliminado ? "Sí" : "No"}</td>
+          <td>{item.total}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+) : (
+  !loading && <p>No se encontraron resultados.</p>
+)}
     </div>
   );
 }

@@ -37,4 +37,10 @@ public class FiltroPersonalizadoController  {
             @Argument Boolean eliminado) {
         return servicio.guardarFiltro(usuarioId, nombreFiltro, categoria, fechaInicio, fechaFin, eliminado);
     }
+
+    @MutationMapping
+    public Boolean eliminarFiltro(@Argument Long id) {
+        return servicio.eliminarFiltro(id);
+    }
+
 }
