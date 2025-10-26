@@ -79,4 +79,13 @@ type Mutation {
   ): FiltroPersonalizado
 
   eliminarFiltro(id: ID!): Boolean
+
+  editarFiltro(
+    id: ID!,
+    nombreFiltro: String,
+    categoria: CategoriaDonacion,
+    fechaInicio: String,
+    fechaFin: String,
+    eliminado: Boolean
+  ): FiltroPersonalizado
 }

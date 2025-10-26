@@ -5,6 +5,8 @@ import { INFORME_DONACIONES_AGRUPADO } from "../graphql/queries/informeDonacione
 import { OBTENER_FILTROS_POR_USUARIO } from "../graphql/queries/obtenerFiltros";
 import { GUARDAR_FILTRO } from "../graphql/mutations/guardarFiltro";
 import { ELIMINAR_FILTRO } from "../graphql/mutations/eliminarFiltro";
+import { EDITAR_FILTRO } from "../graphql/mutations/editarFiltro";
+
 
 export default function InformeDonaciones() {
   const [categoria, setCategoria] = useState("");
@@ -23,6 +25,7 @@ export default function InformeDonaciones() {
       : INFORME_DONACIONES
   );
 
+  const [editarFiltro] = useMutation(EDITAR_FILTRO);
   const [eliminarFiltro] = useMutation(ELIMINAR_FILTRO);
   const [guardarFiltro] = useMutation(GUARDAR_FILTRO);
 
@@ -102,6 +105,30 @@ export default function InformeDonaciones() {
       console.error(err);
     }
   };
+
+  const handleEditarFiltro = async (filtro) => {
+  const nuevoNombre = prompt("Nuevo nombre del filtro:", filtro.nombreFiltro);
+  if (!nuevoNombre) return;
+
+  try {
+    await editarFiltro({
+      variables: {
+        id: filtro.id,
+        nombreFiltro: nuevoNombre,
+        categoria: filtro.categoria || null,
+        fechaInicio: filtro.fechaInicio || null,
+        fechaFin: filtro.fechaFin || null,
+        eliminado: filtro.eliminado,
+      },
+    });
+    alert("✏️ Filtro actualizado correctamente.");
+    refetch();
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error al editar el filtro.");
+  }
+};
+
 
   return (
     <div style={{ maxWidth: "900px", margin: "2rem auto" }}>
@@ -242,12 +269,19 @@ export default function InformeDonaciones() {
                   <td>
                     <button onClick={() => handleAplicarFiltro(f)}>✅ Aplicar</button>
                     <button
+                      onClick={() => handleEditarFiltro(f)}
+                      style={{ color: "orange", marginLeft: "0.5rem" }}
+                    >
+                      ✏️ Editar
+                    </button>
+                    <button
                       onClick={() => handleEliminarFiltro(f.id)}
                       style={{ color: "red", marginLeft: "0.5rem" }}
                     >
                       🗑️ Borrar
                     </button>
                   </td>
+
                 </tr>
               ))
             ) : (

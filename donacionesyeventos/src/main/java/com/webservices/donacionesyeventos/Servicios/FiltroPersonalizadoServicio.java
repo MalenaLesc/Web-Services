@@ -64,15 +64,24 @@ public class FiltroPersonalizadoServicio {
         return false;
     }
 
-    public FiltroPersonalizado actualizarFiltro(Long id, FiltroPersonalizado nuevosDatos) {
-        return filtroRepository.findById(id).map(filtro -> {
-            filtro.setNombreFiltro(nuevosDatos.getNombreFiltro());
-            filtro.setCategoria(nuevosDatos.getCategoria());
-            filtro.setFechaInicio(nuevosDatos.getFechaInicio());
-            filtro.setFechaFin(nuevosDatos.getFechaFin());
-            filtro.setEliminado(nuevosDatos.getEliminado());
-            return filtroRepository.save(filtro);
-        }).orElseThrow(() -> new RuntimeException("Filtro no encontrado con id " + id));
-    }
+    public FiltroPersonalizado editarFiltro(Long id, String nombreFiltro,
+                                        CategoriaDonacion categoria,
+                                        LocalDateTime fechaInicio,
+                                        LocalDateTime fechaFin,
+                                        Boolean eliminado) {
+    return filtroRepository.findById(id)
+            .map(filtro -> {
+                if (nombreFiltro != null) filtro.setNombreFiltro(nombreFiltro);
+                if (categoria != null) filtro.setCategoria(categoria);
+                if (fechaInicio != null) filtro.setFechaInicio(fechaInicio);
+                if (fechaFin != null) filtro.setFechaFin(fechaFin);
+                if (eliminado != null) filtro.setEliminado(eliminado);
+                return filtroRepository.save(filtro);
+            })
+            .orElseThrow(() -> new RuntimeException("Filtro no encontrado con id " + id));
+}
 
 }
+
+
+

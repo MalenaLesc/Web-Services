@@ -43,4 +43,16 @@ public class FiltroPersonalizadoController  {
         return servicio.eliminarFiltro(id);
     }
 
+    @MutationMapping
+    public FiltroPersonalizado editarFiltro(
+        @Argument Long id,
+        @Argument String nombreFiltro,
+        @Argument CategoriaDonacion categoria,
+        @Argument LocalDateTime fechaInicio,
+        @Argument LocalDateTime fechaFin,
+        @Argument Boolean eliminado) {
+    return servicio.editarFiltro(id, nombreFiltro, categoria, fechaInicio, fechaFin, eliminado);
+}
+
+
 }
