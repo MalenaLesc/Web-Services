@@ -20,10 +20,10 @@ public class FiltroPersonalizadoServicio {
     private UsuarioServicio usuarioServicio; // para obtener el Usuario desde el ID
 
     public FiltroPersonalizado guardarFiltro(Long usuarioId, String nombreFiltro,
-                                             CategoriaDonacion categoria,
-                                             LocalDateTime fechaInicio,
-                                             LocalDateTime fechaFin,
-                                             Boolean eliminado) {
+            CategoriaDonacion categoria,
+            LocalDateTime fechaInicio,
+            LocalDateTime fechaFin,
+            Boolean eliminado) {
 
         Usuario usuario = usuarioServicio.getUsuarioById(usuarioId);
         if (usuario == null) {
@@ -41,8 +41,6 @@ public class FiltroPersonalizadoServicio {
         return filtroRepository.save(filtro);
     }
 
-
-
     public List<FiltroPersonalizado> obtenerFiltrosPorUsuario(Long usuarioId) {
         Usuario usuario = usuarioServicio.getUsuarioById(usuarioId);
         if (usuario == null) {
@@ -51,7 +49,6 @@ public class FiltroPersonalizadoServicio {
         return filtroRepository.findByUsuario(usuario);
     }
 
- 
     public FiltroPersonalizado getFiltro(Long id) {
         return filtroRepository.findById(id).orElse(null);
     }
@@ -65,23 +62,25 @@ public class FiltroPersonalizadoServicio {
     }
 
     public FiltroPersonalizado editarFiltro(Long id, String nombreFiltro,
-                                        CategoriaDonacion categoria,
-                                        LocalDateTime fechaInicio,
-                                        LocalDateTime fechaFin,
-                                        Boolean eliminado) {
-    return filtroRepository.findById(id)
-            .map(filtro -> {
-                if (nombreFiltro != null) filtro.setNombreFiltro(nombreFiltro);
-                if (categoria != null) filtro.setCategoria(categoria);
-                if (fechaInicio != null) filtro.setFechaInicio(fechaInicio);
-                if (fechaFin != null) filtro.setFechaFin(fechaFin);
-                if (eliminado != null) filtro.setEliminado(eliminado);
-                return filtroRepository.save(filtro);
-            })
-            .orElseThrow(() -> new RuntimeException("Filtro no encontrado con id " + id));
-}
+            CategoriaDonacion categoria,
+            LocalDateTime fechaInicio,
+            LocalDateTime fechaFin,
+            Boolean eliminado) {
+        return filtroRepository.findById(id)
+                .map(filtro -> {
+                    if (nombreFiltro != null)
+                        filtro.setNombreFiltro(nombreFiltro);
+                    if (categoria != null)
+                        filtro.setCategoria(categoria);
+                    if (fechaInicio != null)
+                        filtro.setFechaInicio(fechaInicio);
+                    if (fechaFin != null)
+                        filtro.setFechaFin(fechaFin);
+                    if (eliminado != null)
+                        filtro.setEliminado(eliminado);
+                    return filtroRepository.save(filtro);
+                })
+                .orElseThrow(() -> new RuntimeException("Filtro no encontrado con id " + id));
+    }
 
 }
-
-
-

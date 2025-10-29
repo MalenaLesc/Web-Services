@@ -23,55 +23,54 @@ import com.webservices.donacionesyeventos.dtos.InformeParticipacionDTO;
 @Service
 public class InformeParticipacionServicio {
 
-    @Autowired
-    private EventoRepository eventoRepository;
+        @Autowired
+        private EventoRepository eventoRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+        @Autowired
+        private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private DonacionesEventoRepository donacionesRepository;
+        @Autowired
+        private DonacionesEventoRepository donacionesRepository;
 
-    public List<InformeParticipacionDTO> obtenerInforme(
-            Long usuarioId,
-            LocalDateTime fechaInicio,
-            LocalDateTime fechaFin) {
+        public List<InformeParticipacionDTO> obtenerInforme(
+                        Long usuarioId,
+                        LocalDateTime fechaInicio,
+                        LocalDateTime fechaFin) {
 
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                Usuario usuario = usuarioRepository.findById(usuarioId)
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Filtrar solo los eventos donde el usuario participó
-        List<EventoSolidario> eventos = eventoRepository.findAll().stream()
-                .filter(e -> e.getParticipantesEvento().contains(usuario))
-                .filter(e -> fechaInicio == null || !e.getFechaHoraEvento().isBefore(fechaInicio))
-                .filter(e -> fechaFin == null || !e.getFechaHoraEvento().isAfter(fechaFin))
-                .toList();
+                // Filtrar solo los eventos donde el usuario participó
+                List<EventoSolidario> eventos = eventoRepository.findAll().stream()
+                                .filter(e -> e.getParticipantesEvento().contains(usuario))
+                                .filter(e -> fechaInicio == null || !e.getFechaHoraEvento().isBefore(fechaInicio))
+                                .filter(e -> fechaFin == null || !e.getFechaHoraEvento().isAfter(fechaFin))
+                                .toList();
 
-        // Agrupar por mes
-        Map<String, List<InformeEventoDTO>> agrupadoPorMes = new TreeMap<>();
+                // Agrupar por mes
+                Map<String, List<InformeEventoDTO>> agrupadoPorMes = new TreeMap<>();
 
-        for (EventoSolidario evento : eventos) {
-            // Calcular total de donaciones en ese evento
-            int totalDonaciones = donacionesRepository.findByEvento(evento).stream()
-                    .mapToInt(DonacionesEvento::getCantidad)
-                    .sum();
+                for (EventoSolidario evento : eventos) {
+                        // Calcular total de donaciones en ese evento
+                        int totalDonaciones = donacionesRepository.findByEvento(evento).stream()
+                                        .mapToInt(DonacionesEvento::getCantidad)
+                                        .sum();
 
-            String mes = evento.getFechaHoraEvento()
-                    .getMonth()
-                    .getDisplayName(TextStyle.FULL, new Locale("es", "ES"));
+                        String mes = evento.getFechaHoraEvento()
+                                        .getMonth()
+                                        .getDisplayName(TextStyle.FULL, new Locale("es", "ES"));
 
-            agrupadoPorMes
-                    .computeIfAbsent(mes, k -> new ArrayList<>())
-                    .add(new InformeEventoDTO(
-                            evento.getFechaHoraEvento().toLocalDate(),
-                            evento.getNombreEvento(),
-                            evento.getDescripcion(),
-                            totalDonaciones
-                    ));
+                        agrupadoPorMes
+                                        .computeIfAbsent(mes, k -> new ArrayList<>())
+                                        .add(new InformeEventoDTO(
+                                                        evento.getFechaHoraEvento().toLocalDate(),
+                                                        evento.getNombreEvento(),
+                                                        evento.getDescripcion(),
+                                                        totalDonaciones));
+                }
+
+                return agrupadoPorMes.entrySet().stream()
+                                .map(entry -> new InformeParticipacionDTO(entry.getKey(), entry.getValue()))
+                                .toList();
         }
-
-        return agrupadoPorMes.entrySet().stream()
-                .map(entry -> new InformeParticipacionDTO(entry.getKey(), entry.getValue()))
-                .toList();
-    }
 }
